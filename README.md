@@ -28,11 +28,12 @@ Gradle will look for your JFlex files in `src/main/jflex/*.jflex`.
 ## Credits
 
 gradle-plugin-jflex is a plugin based on
-gradle-jflex-plugin which was written by [Tom Lee](http://tomlee.co).
+[gradle-jflex-plugin](https://github.com/thomaslee/gradle-jflex-plugin)
+which was written by [Tom Lee](http://tomlee.co).
 
 # License
 
-Copyright (C) 2014 Jörg Prante
+Copyright (C) 2015 Jörg Prante
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
