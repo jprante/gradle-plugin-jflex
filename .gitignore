@@ -1,6 +1,15 @@
-/.gradle
-/build
+target
+build
+out
+*~
+.gradle
+*.iml
 *.ipr
 *.iws
-*.iml
+.idea
+*.class
+user.gradle
+.settings
+*.classpath
+*.project
 

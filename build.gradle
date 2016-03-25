@@ -1,6 +1,6 @@
 
 group = 'org.xbib.gradle.plugin'
-version = '1.0.0'
+version = '1.0.1'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -21,10 +21,11 @@ configurations {
 }
 
 dependencies {
+  compile localGroovy()
   compile gradleApi()
   compile "de.jflex:jflex:1.6.0"
-  testCompile 'junit:junit:4.11'
-  wagon 'org.apache.maven.wagon:wagon-ssh-external:2.6'
+  testCompile 'junit:junit:4.12'
+  wagon 'org.apache.maven.wagon:wagon-ssh-external:2.10'
 }
 
 uploadArchives {

@@ -2,6 +2,12 @@
 
 A Gradle plugin for [JFlex](http://jflex.de)
 
+# Versions
+
+1.0.0 - for Gradle < 2.12
+
+1.0.1 - for Gradle >= 2.12
+
 ## Usage
 
     apply plugin: 'java'
@@ -15,7 +21,7 @@ A Gradle plugin for [JFlex](http://jflex.de)
             }
         }
         dependencies {
-            classpath 'org.xbib.gradle.plugins:gradle-plugin-jflex:1.0.0'
+            classpath 'org.xbib.gradle.plugins:gradle-plugin-jflex:1.0.1'
         }
     }
 
