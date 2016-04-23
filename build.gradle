@@ -1,8 +1,8 @@
 
 group = 'org.xbib.gradle.plugin'
-version = '1.0.1'
+version = '1.1.0'
 
-apply plugin: 'java'
+apply plugin: 'groovy'
 apply plugin: 'maven'
 
 buildscript {
@@ -21,10 +21,8 @@ configurations {
 }
 
 dependencies {
-  compile localGroovy()
   compile gradleApi()
-  compile "de.jflex:jflex:1.6.0"
-  testCompile 'junit:junit:4.12'
+  compile "de.jflex:jflex:1.6.1"
   wagon 'org.apache.maven.wagon:wagon-ssh-external:2.10'
 }
 

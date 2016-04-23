@@ -2,16 +2,7 @@
 
 A Gradle plugin for [JFlex](http://jflex.de)
 
-# Versions
-
-1.0.0 - for Gradle < 2.12
-
-1.0.1 - for Gradle >= 2.12
-
 ## Usage
-
-    apply plugin: 'java'
-    apply plugin: 'jflex'
 
     buildscript {
         repositories {
@@ -21,15 +12,13 @@ A Gradle plugin for [JFlex](http://jflex.de)
             }
         }
         dependencies {
-            classpath 'org.xbib.gradle.plugins:gradle-plugin-jflex:1.0.1'
+            classpath 'org.xbib.gradle.plugins:gradle-plugin-jflex:1.1.0'
         }
     }
 
-    dependencies {
-        jflex 'de.jflex:jflex:1.6.0'
-    }
+    apply plugin: 'jflex'
 
-Gradle will look for your JFlex files in `src/main/jflex/*.jflex`.
+Gradle will look for your JFlex files in `src/main/jflex/**/*.jflex`.
 
 ## Credits
 
