@@ -16,7 +16,7 @@ A Gradle plugin for [JFlex](http://jflex.de)
         }
     }
 
-    apply plugin: 'jflex'
+    apply plugin: 'org.xbib.gradle.plugin.jflex'
 
 Gradle will look for your JFlex files in `src/main/jflex/**/*.jflex`.
 

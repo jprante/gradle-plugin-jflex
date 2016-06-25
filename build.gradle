@@ -1,19 +1,36 @@
 
-group = 'org.xbib.gradle.plugin'
-version = '1.1.0'
-
-apply plugin: 'groovy'
-apply plugin: 'maven'
+ext {
+    user = 'xbib'
+    name = 'gradle-plugin-flex'
+    pluginDescription = 'Gradle plugin for using JFlex'
+    scmUrl = 'https://github.com/' + user + '/' + name
+    scmConnection = 'scm:git:git://github.com/' + user + '/' + name + '.git'
+    scmDeveloperConnection = 'scm:git:git://github.com/' + user + '/' + name + '.git'
+}
 
 buildscript {
   repositories {
     jcenter()
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath 'com.gradle.publish:plugin-publish-plugin:0.9.4'
+    classpath 'co.riiid:gradle-github-plugin:0.4.2'
   }
 }
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'co.riiid.gradle'
+apply plugin: "com.gradle.plugin-publish"
 
 repositories {
   mavenLocal()
   mavenCentral()
+  jcenter()
 }
 
 configurations {
@@ -26,15 +43,26 @@ dependencies {
   wagon 'org.apache.maven.wagon:wagon-ssh-external:2.10'
 }
 
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      configuration = configurations.wagon
-      repository (
-              id: 'xbib.org',
-              url: uri('scpexe://xbib.org/repository'),
-              authentication: [ userName: xbibUsername, privateKey: xbibPrivateKey]
-      )
-    }
+task javadocJar(type: Jar, dependsOn: classes) {
+  from javadoc
+  classifier 'javadoc'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  from sourceSets.main.allSource
+  classifier 'sources'
+}
+
+artifacts {
+  archives javadocJar, sourcesJar
+}
+
+if (project.hasProperty('signing.keyId')) {
+  signing {
+    sign configurations.archives
   }
 }
+
+apply from: 'gradle/git.gradle'
+apply from: 'gradle/publish.gradle'
+
