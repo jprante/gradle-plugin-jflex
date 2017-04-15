@@ -12,7 +12,7 @@ A Gradle plugin for [JFlex](http://jflex.de)
             }
         }
         dependencies {
-            classpath 'org.xbib.gradle.plugins:gradle-plugin-jflex:1.1.0'
+            classpath 'org.xbib.gradle.plugin:gradle-plugin-jflex:1.1.0'
         }
     }
 
