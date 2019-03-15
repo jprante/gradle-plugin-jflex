@@ -1,7 +1,7 @@
 
 ext {
     user = 'xbib'
-    name = 'gradle-plugin-flex'
+    name = 'gradle-plugin-jflex'
     pluginDescription = 'Gradle plugin for using JFlex'
     scmUrl = 'https://github.com/' + user + '/' + name
     scmConnection = 'scm:git:git://github.com/' + user + '/' + name + '.git'
@@ -16,15 +16,13 @@ buildscript {
     }
   }
   dependencies {
-    classpath 'com.gradle.publish:plugin-publish-plugin:0.9.4'
-    classpath 'co.riiid:gradle-github-plugin:0.4.2'
+    classpath 'com.gradle.publish:plugin-publish-plugin:0.10.1'
   }
 }
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'co.riiid.gradle'
 apply plugin: "com.gradle.plugin-publish"
 
 repositories {
@@ -39,8 +37,8 @@ configurations {
 
 dependencies {
   compile gradleApi()
-  compile "de.jflex:jflex:1.6.1"
-  wagon 'org.apache.maven.wagon:wagon-ssh-external:2.10'
+  compile "de.jflex:jflex:1.7.0"
+  wagon 'org.apache.maven.wagon:wagon-ssh:3.00'
 }
 
 task javadocJar(type: Jar, dependsOn: classes) {
@@ -63,6 +61,5 @@ if (project.hasProperty('signing.keyId')) {
   }
 }
 
-apply from: 'gradle/git.gradle'
 apply from: 'gradle/publish.gradle'
 
