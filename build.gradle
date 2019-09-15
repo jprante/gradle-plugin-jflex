@@ -1,6 +1,6 @@
 
 ext {
-    user = 'xbib'
+    user = 'jprante'
     name = 'gradle-plugin-jflex'
     pluginDescription = 'Gradle plugin for using JFlex'
     scmUrl = 'https://github.com/' + user + '/' + name
@@ -41,6 +41,23 @@ dependencies {
   wagon 'org.apache.maven.wagon:wagon-ssh:3.00'
 }
 
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+compileTestJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:all,-fallthrough"
+    if (!options.compilerArgs.contains("-processor")) {
+        options.compilerArgs << '-proc:none'
+    }
+}
+
 task javadocJar(type: Jar, dependsOn: classes) {
   from javadoc
   classifier 'javadoc'
@@ -55,11 +72,6 @@ artifacts {
   archives javadocJar, sourcesJar
 }
 
-if (project.hasProperty('signing.keyId')) {
-  signing {
-    sign configurations.archives
-  }
-}
 
 apply from: 'gradle/publish.gradle'
 
