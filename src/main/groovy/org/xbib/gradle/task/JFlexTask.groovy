@@ -1,7 +1,7 @@
 package org.xbib.gradle.task
 
-import jflex.GeneratorException
 import jflex.Main
+import jflex.exceptions.GeneratorException
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileVisitDetails
 import org.gradle.api.tasks.InputDirectory
@@ -28,9 +28,9 @@ class JFlexTask extends DefaultTask {
     }
 
     private void generateJflex() {
-        def flexFiles = project.fileTree(dir:source, include:'**/*.jflex')
+        def flexFiles = project.fileTree(dir: source, include: '**/*.jflex')
 
-        if(flexFiles.filter {!it.directory}.empty) {
+        if (flexFiles.filter { !it.directory }.empty) {
             logger.warn("no flex files found")
         } else {
             flexFiles.visit { FileVisitDetails file ->
