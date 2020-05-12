@@ -1,6 +1,5 @@
 package org.xbib.gradle.task
 
-import jflex.GeneratorException
 import jflex.Main
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileVisitDetails
@@ -28,26 +27,23 @@ class JFlexTask extends DefaultTask {
     }
 
     private void generateJflex() {
-        def flexFiles = project.fileTree(dir:source, include:'**/*.jflex')
-
-        if(flexFiles.filter {!it.directory}.empty) {
+        def flexFiles = project.fileTree(dir: source, include:'**/*.jflex')
+        if (flexFiles.filter { !it.directory }.empty) {
             logger.warn("no flex files found")
         } else {
             flexFiles.visit { FileVisitDetails file ->
                 if (file.isDirectory()) {
                     return
                 }
-
                 try {
-                    def args = ['-q', file.file.absolutePath,
-                                '-d', project.file("$generateDir/${file.relativePath.parent}").absolutePath + '/'] as String[]
-
+                    def args = [
+                            '-q', file.file.absolutePath,
+                            '-d', project.file("$generateDir/${file.relativePath.parent}").absolutePath + '/'
+                    ] as String[]
                     logger.debug "running jflex $args"
-
                     Main.generate(args)
-
                     logger.info "Java code generated from JFlex file : $file.relativePath"
-                } catch (GeneratorException e) {
+                } catch (Exception e) {
                     logger.error("JFlex $e.message", e)
                     throw new StopActionException('error occurred during JFlex code generation')
                 }
