@@ -6,8 +6,12 @@ buildscript {
     }
   }
   dependencies {
-    classpath 'com.gradle.publish:plugin-publish-plugin:0.11.0'
+    classpath "com.gradle.publish:plugin-publish-plugin:${rootProject.property('gradle.publish.plugin.version')}"
   }
+}
+
+plugins {
+    id 'java-gradle-plugin'
 }
 
 apply plugin: 'groovy'
@@ -24,8 +28,17 @@ ext {
     scmDeveloperConnection = 'scm:git:git://github.com/' + user + '/' + name + '.git'
 }
 
+gradlePlugin {
+    plugins {
+        jflexPlugin {
+            id = 'org.xbib.gradle.plugin.jflex'
+            implementationClass = 'org.xbib.gradle.plugin.JFlexPlugin'
+        }
+    }
+}
+
 wrapper {
-    gradleVersion = '6.4'
+    gradleVersion = "${project.property('gradle.wrapper.version')}"
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -40,9 +53,13 @@ configurations {
 }
 
 dependencies {
-  implementation gradleApi()
-  implementation "de.jflex:jflex:1.8.2"
-  wagon 'org.apache.maven.wagon:wagon-ssh:3.0.0'
+    implementation gradleApi()
+    implementation "de.jflex:jflex:${project.property('jflex.version')}"
+    testImplementation gradleTestKit()
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${project.property('junit.version')}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.property('junit.version')}"
+    testImplementation "org.apache.logging.log4j:log4j-core:${project.property('log4j.version')}"
+    wagon "org.apache.maven.wagon:wagon-ssh:${project.property('wagon.version')}"
 }
 
 compileJava {
@@ -55,10 +72,21 @@ compileTestJava {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-tasks.withType(JavaCompile) {
-    options.compilerArgs << "-Xlint:all,-fallthrough"
-    if (!options.compilerArgs.contains("-processor")) {
-        options.compilerArgs << '-proc:none'
+test {
+    useJUnitPlatform()
+    failFast = true
+    testLogging {
+        showStandardStreams = true
+        events 'STARTED', 'PASSED', 'FAILED', 'SKIPPED'
+    }
+    afterSuite { desc, result ->
+        if (!desc.parent) {
+            println "\nTest result: ${result.resultType}"
+            println "Test summary: ${result.testCount} tests, " +
+                    "${result.successfulTestCount} succeeded, " +
+                    "${result.failedTestCount} failed, " +
+                    "${result.skippedTestCount} skipped"
+        }
     }
 }
 
