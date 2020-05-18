@@ -11,10 +11,8 @@ A Gradle plugin for [JFlex](http://jflex.de)
 ## Usage
 
     plugins {
-       id 'org.xbib.gradle.plugin.jflex'
+       id "org.xbib.gradle.plugin.jflex" version "1.4.0"
     }
-    
-    apply plugin: 'org.xbib.gradle.plugin.jflex'
 
 Gradle will look for your JFlex files in the source sets you specified.
 By default, it looks with the pattern `**/*.jflex` under `src/main/jflex`
@@ -28,7 +26,7 @@ You can set up the source sets like this:
            srcDir "src/main/jflex"
          }
          java {
-           srcDir "build/my-generated-sources/jflex"
+           srcDir "$buildDir/my-generated-sources/jflex"
          }
       }
     }
@@ -38,7 +36,7 @@ If not given, the JFlex target path for generated Java source follows the patter
 
 `${project.buildDir}/generated/sources/jflex`
 
-The JFlex target path will be added automaticlly to the java compile task source directory 
+The JFlex target path will be added automatically to the java compile task source directory 
 of the source set.
 
 ## Parameter support
