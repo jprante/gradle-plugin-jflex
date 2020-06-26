@@ -77,7 +77,9 @@ class JFlexPlugin implements Plugin<Project> {
                 target = targetFile
             }
             logger.info "created ${taskName} for sources ${sourceDirectorySet.asList()} and target ${targetFile}"
-            project.tasks.findByName(sourceSet.compileJavaTaskName).dependsOn taskProvider
+            project.tasks.named(sourceSet.compileJavaTaskName).configure({
+                dependsOn taskProvider
+            })
             if (sourceSet.java && sourceSet.java.srcDirs) {
                 sourceSet.java.srcDirs += targetFile
             }

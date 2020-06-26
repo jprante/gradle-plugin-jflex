@@ -7,16 +7,21 @@ import jflex.option.Options
 import jflex.skeleton.Skeleton
 import org.gradle.api.DefaultTask
 import org.gradle.api.logging.Logging
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.StopActionException
 import org.gradle.api.tasks.TaskAction
 
 import java.nio.charset.Charset
 
+@CacheableTask
 class JFlexTask extends DefaultTask {
 
     @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
     Iterable<File> source
 
     @OutputDirectory

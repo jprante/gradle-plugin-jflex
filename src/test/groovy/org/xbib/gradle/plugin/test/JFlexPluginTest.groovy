@@ -69,4 +69,48 @@ jflex {
             assertEquals(1, list.size())
         }
     }
+
+    @Test
+    void testTaskConfigurationAvoidance() {
+        String buildFileContent = '''
+plugins {
+    id 'org.xbib.gradle.plugin.jflex'
+}
+
+sourceSets {
+  test {
+     jflex {
+       srcDir "${System.getProperty('user.dir')}/src/test/jflex"
+     }
+     java {
+       srcDir "${System.getProperty('user.dir')}/build/my-generated-sources/jflex"
+     }
+  }
+}
+
+jflex {
+   verbose = false
+   dump = false
+   progress = false
+}
+
+def configuredTasks = []
+tasks.configureEach {
+    configuredTasks << it
+}
+
+gradle.buildFinished {
+    def configuredTaskPaths = configuredTasks*.path
+    
+    assert configuredTaskPaths == [':help']
+}
+'''
+        buildFile.write(buildFileContent)
+        GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withArguments(":help")
+                .withPluginClasspath()
+                .forwardOutput()
+                .build()
+    }
 }
