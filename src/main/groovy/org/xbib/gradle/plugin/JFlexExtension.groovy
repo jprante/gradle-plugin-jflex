@@ -60,4 +60,8 @@ class JFlexExtension {
     @Input
     @Optional
     Boolean statistics = false
+
+    @Input
+    @Optional
+    Boolean writeIntoJavaSrc = false
 }

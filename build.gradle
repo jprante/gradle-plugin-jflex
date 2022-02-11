@@ -1,9 +1,9 @@
 plugins {
-    id "de.marcphilipp.nexus-publish" version "0.4.0"
-    id "io.codearte.nexus-staging" version "0.21.1"
     id 'java-gradle-plugin'
     id 'groovy'
-    id 'com.gradle.plugin-publish' version '0.11.0'
+    id 'com.gradle.plugin-publish' version '0.18.0'
+    id "de.marcphilipp.nexus-publish" version "0.4.0"
+    id "io.codearte.nexus-staging" version "0.21.1"
 }
 
 wrapper {
@@ -23,12 +23,12 @@ ext {
 apply plugin: 'java-library'
 apply from: rootProject.file('gradle/ide/idea.gradle')
 apply from: rootProject.file('gradle/compile/java.gradle')
+apply from: rootProject.file('gradle/compile/groovy.gradle')
 apply from: rootProject.file('gradle/test/junit5.gradle')
 apply from: rootProject.file('gradle/publishing/sonatype.gradle')
 
 dependencies {
     api gradleApi()
-    implementation "org.codehaus.groovy:groovy-all:${project.property('groovy.version')}"
     implementation "de.jflex:jflex:${project.property('jflex.version')}"
     testImplementation gradleTestKit()
 }

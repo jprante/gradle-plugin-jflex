@@ -1,0 +1,33 @@
+apply plugin: 'groovy'
+
+dependencies {
+    implementation "org.codehaus.groovy:groovy:${project.property('groovy.version')}"
+    testImplementation "org.codehaus.groovy:groovy:${project.property('groovy.version')}"
+}
+
+compileGroovy {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+compileTestGroovy {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType(GroovyCompile) {
+    options.compilerArgs
+    if (!options.compilerArgs.contains("-processor")) {
+        options.compilerArgs.add('-proc:none')
+    }
+}
+
+task groovydocJar(type: Jar) {
+    dependsOn groovydoc
+    from groovydoc.destinationDir
+    archiveClassifier.set('groovydoc')
+}
+
+artifacts {
+    archives groovydocJar
+}

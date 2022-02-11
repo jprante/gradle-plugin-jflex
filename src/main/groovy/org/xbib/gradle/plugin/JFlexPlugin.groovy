@@ -8,8 +8,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 
-import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize
-
 class JFlexPlugin implements Plugin<Project> {
 
     private static final Logger logger = Logging.getLogger(JFlexPlugin)
@@ -67,14 +65,14 @@ class JFlexPlugin implements Plugin<Project> {
     private static void addJFlexTaskForSourceSet(Project project, SourceSet sourceSet) {
         String taskName = sourceSet.getTaskName('generate', 'jflex')
         SourceDirectorySet sourceDirectorySet = sourceSet.extensions.getByName('jflex') as SourceDirectorySet
-        File targetFile = sourceSet.java && sourceSet.java.srcDirs ? sourceSet.java.srcDirs.last() :
-                project.file("${project.buildDir}/generated/sources/${sourceSet.name}")
+        File targetFile = project.file("${project.buildDir}/generated/sources/${sourceSet.name}")
         if (sourceDirectorySet.asList()) {
             TaskProvider<JFlexTask> taskProvider = project.tasks.register(taskName, JFlexTask) {
                 group = 'jflex'
                 description = 'Generates code from JFlex files in ' + sourceSet.name
                 source = sourceDirectorySet.asList()
                 target = targetFile
+                theSourceSet = sourceSet
             }
             logger.info "created ${taskName} for sources ${sourceDirectorySet.asList()} and target ${targetFile}"
             project.tasks.named(sourceSet.compileJavaTaskName).configure({
@@ -84,5 +82,9 @@ class JFlexPlugin implements Plugin<Project> {
                 sourceSet.java.srcDirs += targetFile
             }
         }
+    }
+
+    private static String capitalize(CharSequence charSequence) {
+        return charSequence.length() == 0 ? "" : "" + Character.toUpperCase(charSequence.charAt(0)) + charSequence.subSequence(1, charSequence.length())
     }
 }
