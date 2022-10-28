@@ -191,4 +191,48 @@ gradle.buildFinished {
                 .forwardOutput()
                 .build()
     }
+
+    @Test
+    void testCanLoadTaskFromConfigurationCache() {
+        String settingsFileContent = '''
+rootProject.name = 'jflex-test'
+'''
+        settingsFile.write(settingsFileContent)
+        String buildFileContent = '''
+plugins {
+    id 'org.xbib.gradle.plugin.jflex'
+}
+
+sourceSets {
+  test {
+     jflex {
+       // point to our test directory where the jflex file lives
+       srcDir "${providers.systemProperty('user.dir')}/src/test/jflex"
+     }
+  }
+}
+
+jflex {
+   verbose = true
+   dump = false
+   progress = false
+}
+'''
+        buildFile.write(buildFileContent)
+        GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withArguments("--configuration-cache", ":generateJflex")
+                .withPluginClasspath()
+                .forwardOutput()
+                .build()
+
+        BuildResult result = GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withArguments("--configuration-cache", ":generateJflex")
+                .withPluginClasspath()
+                .forwardOutput()
+                .build()
+
+        assertTrue(result.output.contains("Reusing configuration cache."))
+    }
 }
