@@ -15,13 +15,13 @@ class JFlexPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         logger.info "JFlex plugin says hello"
+        def extension = createJflexExtension(project)
         project.with {
             apply plugin: 'java-library'
-            createJflexExtension(project)
             addSourceSetExtensions(project)
         }
         project.afterEvaluate {
-            addJFlexTasks(project)
+            addJFlexTasks(project, extension)
         }
     }
 
@@ -52,17 +52,17 @@ class JFlexPlugin implements Plugin<Project> {
         }
     }
 
-    private static void createJflexExtension(Project project) {
+    private static JFlexExtension createJflexExtension(Project project) {
         project.extensions.create ('jflex', JFlexExtension)
     }
 
-    private static void addJFlexTasks(Project project) {
+    private static void addJFlexTasks(Project project, JFlexExtension jFlexExtension) {
         project.sourceSets.all { SourceSet sourceSet ->
-            addJFlexTaskForSourceSet(project, sourceSet)
+            addJFlexTaskForSourceSet(project, sourceSet, jFlexExtension)
         }
     }
 
-    private static void addJFlexTaskForSourceSet(Project project, SourceSet sourceSet) {
+    private static void addJFlexTaskForSourceSet(Project project, SourceSet sourceSet, JFlexExtension jFlexExtension) {
         String taskName = sourceSet.getTaskName('generate', 'jflex')
         SourceDirectorySet sourceDirectorySet = sourceSet.extensions.getByName('jflex') as SourceDirectorySet
         File targetFile = project.file("${project.buildDir}/generated/sources/${sourceSet.name}")
