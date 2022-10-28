@@ -8,6 +8,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskProvider
 
 class JFlexPlugin implements Plugin<Project> {
@@ -22,13 +23,11 @@ class JFlexPlugin implements Plugin<Project> {
             apply plugin: 'java-library'
             addSourceSetExtensions(project)
         }
-        project.afterEvaluate {
-            addJFlexTasks(project, extension)
-        }
+        addJFlexTasks(project, extension)
     }
 
     private static void addSourceSetExtensions(Project project) {
-        project.sourceSets.all { SourceSet sourceSet ->
+        project.extensions.getByType(SourceSetContainer).all { SourceSet sourceSet ->
             createSourceSetExtension(project, sourceSet)
             createConfiguration(project, sourceSet)
         }
@@ -59,7 +58,7 @@ class JFlexPlugin implements Plugin<Project> {
     }
 
     private static void addJFlexTasks(Project project, JFlexExtension jFlexExtension) {
-        project.sourceSets.all { SourceSet sourceSet ->
+        project.extensions.getByType(SourceSetContainer).all { SourceSet sourceSet ->
             addJFlexTaskForSourceSet(project, sourceSet, jFlexExtension)
         }
     }
@@ -84,20 +83,18 @@ class JFlexPlugin implements Plugin<Project> {
                 return defaultTargetFile.get().asFile
             }
         }
-        if (sourceDirectorySet.asList()) {
-            TaskProvider<JFlexTask> taskProvider = project.tasks.register(taskName, JFlexTask) {
-                group = 'jflex'
-                description = 'Generates code from JFlex files in ' + sourceSet.name
-                source = sourceDirectorySet.asList()
-                target.fileProvider(targetFile)
-            }
-            logger.info "created ${taskName} for sources ${sourceDirectorySet.asList()} and target ${targetFile}"
-            project.tasks.named(sourceSet.compileJavaTaskName).configure({
-                dependsOn taskProvider
-            })
-            if (sourceSet.java && sourceSet.java.srcDirs) {
-                sourceSet.java.srcDirs += defaultTargetFile
-            }
+        TaskProvider<JFlexTask> taskProvider = project.tasks.register(taskName, JFlexTask) {
+            group = 'jflex'
+            description = 'Generates code from JFlex files in ' + sourceSet.name
+            source = sourceDirectorySet.asList()
+            target.fileProvider(targetFile)
+        }
+        logger.info "created ${taskName} for sources ${sourceDirectorySet.asList()} and target ${targetFile}"
+        project.tasks.named(sourceSet.compileJavaTaskName).configure({
+            dependsOn taskProvider
+        })
+        if (sourceSet.java && sourceSet.java.srcDirs) {
+            sourceSet.java.srcDirs += defaultTargetFile
         }
     }
 
