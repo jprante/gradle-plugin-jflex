@@ -1,9 +1,10 @@
 package org.xbib.gradle.plugin
 
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 
-class JFlexExtension {
+abstract class JFlexExtension {
 
     @Input
     @Optional
@@ -61,7 +62,9 @@ class JFlexExtension {
     @Optional
     Boolean statistics = false
 
-    @Input
-    @Optional
-    Boolean writeIntoJavaSrc = false
+    abstract Property<Boolean> getWriteIntoJavaSrc()
+
+    JFlexExtension() {
+        writeIntoJavaSrc.convention(false)
+    }
 }

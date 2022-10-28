@@ -57,7 +57,7 @@ abstract class JFlexTask extends DefaultTask {
         Options.legacy_dot = ext.legacy_dot
         File targetFile = target.get().asFile
         // hack for writing directly into java source. Not recommended.
-        if (ext.writeIntoJavaSrc) {
+        if (ext.writeIntoJavaSrc.get()) {
             if (theSourceSet.java && theSourceSet.java.srcDirs) {
                 logger.info "java sources: ${theSourceSet.java.srcDirs}"
                 targetFile = theSourceSet.java.srcDirs.first()
