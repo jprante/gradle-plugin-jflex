@@ -1,8 +1,10 @@
 package org.xbib.gradle.plugin
 
+import org.gradle.api.file.Directory
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -65,21 +67,36 @@ class JFlexPlugin implements Plugin<Project> {
     private static void addJFlexTaskForSourceSet(Project project, SourceSet sourceSet, JFlexExtension jFlexExtension) {
         String taskName = sourceSet.getTaskName('generate', 'jflex')
         SourceDirectorySet sourceDirectorySet = sourceSet.extensions.getByName('jflex') as SourceDirectorySet
-        File targetFile = project.file("${project.buildDir}/generated/sources/${sourceSet.name}")
+        Provider<Directory> defaultTargetFile = project.layout.buildDirectory.dir("generated/sources/${sourceSet.name}")
+
+        Provider<File> targetFile = jFlexExtension.writeIntoJavaSrc.map {
+            if (it) {
+                if (sourceSet.java && sourceSet.java.srcDirs) {
+                    logger.info "java sources: ${sourceSet.java.srcDirs}"
+                    File target = sourceSet.java.srcDirs.first()
+                    logger.info "switching to first java source directory ${target}"
+                    return target
+                } else {
+                    logger.warn "writing into java source not possible, is empty"
+                    return defaultTargetFile.get().asFile
+                }
+            } else {
+                return defaultTargetFile.get().asFile
+            }
+        }
         if (sourceDirectorySet.asList()) {
             TaskProvider<JFlexTask> taskProvider = project.tasks.register(taskName, JFlexTask) {
                 group = 'jflex'
                 description = 'Generates code from JFlex files in ' + sourceSet.name
                 source = sourceDirectorySet.asList()
-                target.set(targetFile)
-                theSourceSet = sourceSet
+                target.fileProvider(targetFile)
             }
             logger.info "created ${taskName} for sources ${sourceDirectorySet.asList()} and target ${targetFile}"
             project.tasks.named(sourceSet.compileJavaTaskName).configure({
                 dependsOn taskProvider
             })
             if (sourceSet.java && sourceSet.java.srcDirs) {
-                sourceSet.java.srcDirs += targetFile
+                sourceSet.java.srcDirs += defaultTargetFile
             }
         }
     }

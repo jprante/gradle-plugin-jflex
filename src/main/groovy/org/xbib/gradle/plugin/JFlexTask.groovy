@@ -33,9 +33,6 @@ abstract class JFlexTask extends DefaultTask {
     @OutputDirectory
     abstract DirectoryProperty getTarget()
 
-    @Internal
-    SourceSet theSourceSet
-
     @TaskAction
     void generateAndTransformJflex() throws Exception {
         JFlexExtension ext = project.extensions.findByType(JFlexExtension)
@@ -56,16 +53,6 @@ abstract class JFlexTask extends DefaultTask {
         Options.dump = ext.dump
         Options.legacy_dot = ext.legacy_dot
         File targetFile = target.get().asFile
-        // hack for writing directly into java source. Not recommended.
-        if (ext.writeIntoJavaSrc.get()) {
-            if (theSourceSet.java && theSourceSet.java.srcDirs) {
-                logger.info "java sources: ${theSourceSet.java.srcDirs}"
-                targetFile = theSourceSet.java.srcDirs.first()
-                logger.info "switching to first java source directory ${targetFile}"
-            } else {
-                logger.warn "writing into java source not possible, is empty"
-            }
-        }
         source.each { file ->
             String pkg = getPackageName(file)
             File fullTarget = new File(targetFile, pkg.replace('.','/'))
