@@ -56,7 +56,7 @@ abstract class JFlexTask extends DefaultTask {
         source.each { file ->
             String pkg = getPackageName(file)
             File fullTarget = new File(targetFile, pkg.replace('.','/'))
-            project.mkdir(fullTarget)
+            fullTarget.mkdirs()
             Options.directory = fullTarget
             logger.info "jflex task: source=${file} pkg=${pkg} dir=${targetFile}"
             try {
