@@ -71,7 +71,7 @@ class JFlexPlugin implements Plugin<Project> {
                 group = 'jflex'
                 description = 'Generates code from JFlex files in ' + sourceSet.name
                 source = sourceDirectorySet.asList()
-                target = targetFile
+                target.set(targetFile)
                 theSourceSet = sourceSet
             }
             logger.info "created ${taskName} for sources ${sourceDirectorySet.asList()} and target ${targetFile}"

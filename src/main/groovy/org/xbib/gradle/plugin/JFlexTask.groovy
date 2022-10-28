@@ -6,6 +6,7 @@ import jflex.logging.Out
 import jflex.option.Options
 import jflex.skeleton.Skeleton
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.CacheableTask
@@ -21,7 +22,7 @@ import org.gradle.api.tasks.TaskAction
 import java.nio.charset.Charset
 
 @CacheableTask
-class JFlexTask extends DefaultTask {
+abstract class JFlexTask extends DefaultTask {
 
     private final Logger logger = Logging.getLogger(JFlexTask)
 
@@ -30,7 +31,7 @@ class JFlexTask extends DefaultTask {
     Iterable<File> source
 
     @OutputDirectory
-    File target
+    abstract DirectoryProperty getTarget()
 
     @Internal
     SourceSet theSourceSet
@@ -54,22 +55,23 @@ class JFlexTask extends DefaultTask {
         Options.dot = ext.dot
         Options.dump = ext.dump
         Options.legacy_dot = ext.legacy_dot
+        File targetFile = target.get().asFile
         // hack for writing directly into java source. Not recommended.
         if (ext.writeIntoJavaSrc) {
             if (theSourceSet.java && theSourceSet.java.srcDirs) {
                 logger.info "java sources: ${theSourceSet.java.srcDirs}"
-                target = theSourceSet.java.srcDirs.first()
-                logger.info "switching to first java source directory ${target}"
+                targetFile = theSourceSet.java.srcDirs.first()
+                logger.info "switching to first java source directory ${targetFile}"
             } else {
                 logger.warn "writing into java source not possible, is empty"
             }
         }
         source.each { file ->
             String pkg = getPackageName(file)
-            File fullTarget = new File(target, pkg.replace('.','/'))
+            File fullTarget = new File(targetFile, pkg.replace('.','/'))
             project.mkdir(fullTarget)
             Options.directory = fullTarget
-            logger.info "jflex task: source=${file} pkg=${pkg} dir=${target}"
+            logger.info "jflex task: source=${file} pkg=${pkg} dir=${targetFile}"
             try {
                 new LexGenerator(file).generate()
             } catch (GeneratorException e) {
