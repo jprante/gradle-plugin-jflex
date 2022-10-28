@@ -88,6 +88,23 @@ class JFlexPlugin implements Plugin<Project> {
             description = 'Generates code from JFlex files in ' + sourceSet.name
             source = sourceDirectorySet.asList()
             target.fileProvider(targetFile)
+
+            encoding.set(jFlexExtension.encoding)
+            rootDirectory.set(jFlexExtension.rootDirectory)
+            skel.set(jFlexExtension.skel)
+            verbose.set(jFlexExtension.verbose)
+            jlex.set(jFlexExtension.jlex)
+            no_minimize.set(jFlexExtension.no_minimize)
+            no_backup.set(jFlexExtension.no_backup)
+            unused_warning.set(jFlexExtension.unused_warning)
+            progress.set(jFlexExtension.progress)
+            time.set(jFlexExtension.time)
+            dot.set(jFlexExtension.dot)
+            dump.set(jFlexExtension.dump)
+            legacy_dot.set(jFlexExtension.legacy_dot)
+            statistics.set(jFlexExtension.statistics)
+            writeIntoJavaSrc.set(jFlexExtension.writeIntoJavaSrc)
+
         }
         logger.info "created ${taskName} for sources ${sourceDirectorySet.asList()} and target ${targetFile}"
         project.tasks.named(sourceSet.compileJavaTaskName).configure({
