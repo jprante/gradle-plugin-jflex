@@ -36,29 +36,29 @@ abstract class JFlexTask extends DefaultTask {
     @TaskAction
     void generateAndTransformJflex() throws Exception {
         JFlexExtension ext = project.extensions.findByType(JFlexExtension)
-        Options.setRootDirectory(ext.rootDirectory ? ext.rootDirectory : new File(""))
+        Options.setRootDirectory(ext.rootDirectory.asFile.getOrElse(new File("")))
         Skeleton.readDefault()
-        if (ext.skel) {
-            Skeleton.readSkelFile(ext.skel)
+        if (ext.skel.isPresent()) {
+            Skeleton.readSkelFile(ext.skel.get().asFile)
         }
-        Options.encoding = ext.encoding ? Charset.forName(ext.encoding) : Charset.defaultCharset()
-        Options.verbose = ext.verbose
-        Options.progress = ext.progress
-        Options.unused_warning = ext.unused_warning
-        Options.jlex = ext.jlex
-        Options.no_minimize = ext.no_minimize
-        Options.no_backup = ext.no_backup
-        Options.time = ext.time
-        Options.dot = ext.dot
-        Options.dump = ext.dump
-        Options.legacy_dot = ext.legacy_dot
+        Options.encoding = ext.encoding.map({ Charset.forName(it) }).getOrElse(Charset.defaultCharset())
+        Options.verbose = ext.verbose.get()
+        Options.progress = ext.progress.get()
+        Options.unused_warning = ext.unused_warning.get()
+        Options.jlex = ext.jlex.get()
+        Options.no_minimize = ext.no_minimize.get()
+        Options.no_backup = ext.no_backup.get()
+        Options.time = ext.time.get()
+        Options.dot = ext.dot.get()
+        Options.dump = ext.dump.get()
+        Options.legacy_dot = ext.legacy_dot.get()
         File targetFile = target.get().asFile
         source.each { file ->
             String pkg = getPackageName(file)
-            File fullTarget = new File(targetFile, pkg.replace('.','/'))
+            File fullTarget = new File(targetFile, pkg.replace('.', '/'))
             fullTarget.mkdirs()
             Options.directory = fullTarget
-            logger.info "jflex task: source=${file} pkg=${pkg} dir=${targetFile}"
+            logger.info "jflex task: source=${file} pkg=${pkg} dir=${target}"
             try {
                 new LexGenerator(file).generate()
             } catch (GeneratorException e) {
@@ -66,7 +66,7 @@ abstract class JFlexTask extends DefaultTask {
                 throw new StopActionException('an error occurred during JFlex code generation')
             }
         }
-        if (ext.statistics) {
+        if (ext.statistics.get()) {
             Out.statistics()
         }
     }

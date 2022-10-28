@@ -1,70 +1,53 @@
 package org.xbib.gradle.plugin
 
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 
 abstract class JFlexExtension {
 
-    @Input
-    @Optional
-    String encoding
+    abstract Property<String> getEncoding()
 
-    @Input
-    @Optional
-    File rootDirectory
+    abstract DirectoryProperty getRootDirectory()
 
-    @Input
-    @Optional
-    File skel
+    abstract RegularFileProperty getSkel()
 
-    @Input
-    @Optional
-    Boolean verbose = false
+    abstract Property<Boolean> getVerbose()
 
-    @Input
-    @Optional
-    Boolean jlex = false
+    abstract Property<Boolean> getJlex()
 
-    @Input
-    @Optional
-    Boolean no_minimize = false
+    abstract Property<Boolean> getNo_minimize()
 
-    @Input
-    @Optional
-    Boolean no_backup = false
+    abstract Property<Boolean> getNo_backup()
 
-    @Input
-    @Optional
-    Boolean unused_warning = false
+    abstract Property<Boolean> getUnused_warning()
 
-    @Input
-    @Optional
-    Boolean progress = false
+    abstract Property<Boolean> getProgress()
 
-    @Input
-    @Optional
-    Boolean time = false
+    abstract Property<Boolean> getTime()
 
-    @Input
-    @Optional
-    Boolean dot = false
+    abstract Property<Boolean> getDot()
 
-    @Input
-    @Optional
-    Boolean dump = false
+    abstract Property<Boolean> getDump()
 
-    @Input
-    @Optional
-    Boolean legacy_dot = false
+    abstract Property<Boolean> getLegacy_dot()
 
-    @Input
-    @Optional
-    Boolean statistics = false
+    abstract Property<Boolean> getStatistics()
 
     abstract Property<Boolean> getWriteIntoJavaSrc()
 
     JFlexExtension() {
+        verbose.convention(false)
+        jlex.convention(false)
+        no_minimize.convention(false)
+        no_backup.convention(false)
+        unused_warning.convention(false)
+        progress.convention(false)
+        time.convention(false)
+        dot.convention(false)
+        dump.convention(false)
+        legacy_dot.convention(false)
+        statistics.convention(false)
         writeIntoJavaSrc.convention(false)
     }
 }
