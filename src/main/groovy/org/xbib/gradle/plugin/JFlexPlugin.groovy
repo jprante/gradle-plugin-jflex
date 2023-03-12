@@ -110,9 +110,7 @@ class JFlexPlugin implements Plugin<Project> {
         project.tasks.named(sourceSet.compileJavaTaskName).configure({
             dependsOn taskProvider
         })
-        if (sourceSet.java && sourceSet.java.srcDirs) {
-            sourceSet.java.srcDirs += defaultTargetFile
-        }
+        sourceSet.java.srcDir(defaultTargetFile)
     }
 
     private static String capitalize(CharSequence charSequence) {
