@@ -235,4 +235,58 @@ jflex {
 
         assertTrue(result.output.contains("Reusing configuration cache."))
     }
+
+    @Test
+    void testJFlexInputsFromAnotherTaskSource() {
+        String settingsFileContent = '''
+rootProject.name = 'jflex-test'
+'''
+        settingsFile.write(settingsFileContent)
+        String buildFileContent = '''
+plugins {
+    id 'org.xbib.gradle.plugin.jflex'
+}
+
+def copyJflex = tasks.register("copyJflex", Copy) {
+  // copy our test directory where the jflex file lives to some generated source dir
+	from "${System.getProperty('user.dir')}/src/test/jflex/"
+  into "${project.buildDir}/generated/sources/copyJflex/jflex/main/"
+}
+
+sourceSets {
+  main {
+    jflex {
+      // point to copyJflex task output
+      srcDir copyJflex
+    }
+  }
+}
+'''
+        buildFile.write(buildFileContent)
+        BuildResult result = GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withArguments(":build", "--info")
+                .withPluginClasspath()
+                .forwardOutput()
+                .build()
+        assertEquals(TaskOutcome.SUCCESS, result.task(":build").getOutcome())
+        // search the Java source directory
+        File target = new File(projectDir, "build/generated/sources/main")
+        boolean found = false
+        if (target.exists()) {
+            target.eachFileRecurse {
+                if (it.isFile()) {
+                    println "found: ${it}"
+                    found = true
+                }
+            }
+            // check for generated output
+            assertEquals(1, target.listFiles().length)
+        } else {
+            fail("directory not found: ${target}")
+        }
+        if (!found) {
+            fail("jflex output not found")
+        }
+    }
 }
