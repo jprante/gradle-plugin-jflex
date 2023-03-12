@@ -86,7 +86,7 @@ class JFlexPlugin implements Plugin<Project> {
         TaskProvider<JFlexTask> taskProvider = project.tasks.register(taskName, JFlexTask) {
             group = 'jflex'
             description = 'Generates code from JFlex files in ' + sourceSet.name
-            source = sourceDirectorySet.asList()
+            source = sourceDirectorySet
             target.fileProvider(targetFile)
 
             encoding.set(jFlexExtension.encoding)
