@@ -235,4 +235,71 @@ jflex {
 
         assertTrue(result.output.contains("Reusing configuration cache."))
     }
+
+    @Test
+    void testJFlexOutputShouldAugmentsJavaSources() {
+        String settingsFileContent = '''
+rootProject.name = 'jflex-test'
+'''
+        settingsFile.write(settingsFileContent)
+        String buildFileContent = '''
+plugins {
+    id 'java'
+    id 'org.xbib.gradle.plugin.jflex' apply false
+}
+
+def copyJava = tasks.register("copyJava", Copy) {
+  // copy java resource to custom generated java sources
+	from "${System.getProperty('user.dir')}/src/test/resources/java/"
+	into "${project.buildDir}/generated/sources/custom/java/"
+}
+
+sourceSets {
+  main {
+    java {
+      // copyJava output is one of our java sources
+      srcDir copyJava
+    }
+  }
+}
+
+apply plugin: "org.xbib.gradle.plugin.jflex"
+
+sourceSets {
+  main {
+    jflex {
+      // point to our test directory where the jflex file lives
+      srcDir "${System.getProperty('user.dir')}/src/test/jflex/"
+    }
+  }
+}
+
+'''
+        buildFile.write(buildFileContent)
+        BuildResult result = GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withArguments(":build", "--info")
+                .withPluginClasspath()
+                .forwardOutput()
+                .build()
+        assertEquals(TaskOutcome.SUCCESS, result.task(":build").getOutcome())
+        // search the Java class directory
+        File target = new File(projectDir, "build/classes/java/main/org/xbib/gradle/plugin/test")
+        boolean found = false
+        if (target.exists()) {
+            target.eachFileRecurse {
+                if (it.isFile()) {
+                    println "found: ${it}"
+                    found = true
+                }
+            }
+            // check for compiled classes: Main.class and Test.class
+            assertEquals(2, target.listFiles().length)
+        } else {
+            fail("directory not found: ${target}")
+        }
+        if (!found) {
+            fail("compileJava output not found")
+        }
+    }
 }
